@@ -1,0 +1,15 @@
+.Button {
+  padding: 12px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  border: 1px solid white;
+  background: none;
+  color: inherit;
+  font-weight: bold;
+  border-radius: 5px;
+}
+
+.Button:hover {
+  background: rgb(60, 60, 60);
+}

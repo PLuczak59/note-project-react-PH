@@ -17,8 +17,7 @@ export function SideMenu({ notes ,setNotes , selectedNoteId, setSelectedNoteId, 
       lastUpdatedAt: new Date(),
     });
     if (newNoteData) {
-      const updatedNotes = [...notes, newNoteData]; 
-      setNotes(updatedNotes);
+      setNotes([newNoteData, ...notes]); // Ajouter la nouvelle note en haut de la liste
       setSelectedNoteId(newNoteData.id);
     }
   };
@@ -28,12 +27,6 @@ export function SideMenu({ notes ,setNotes , selectedNoteId, setSelectedNoteId, 
     const updatedNotes = notes.filter((note) => note.id !== id);
     setNotes(updatedNotes);
     setSelectedNoteId(null);
-  };
-
-  const sortNotesByLastUpdatedAt = (notes) => {
-    return notes.sort((a, b) => {
-      return new Date(b.lastUpdatedAt) - new Date(a.lastUpdatedAt);
-    });
   };
 
   return (

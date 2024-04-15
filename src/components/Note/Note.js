@@ -1,40 +1,76 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "../Button/Button";
-import { Check, Trash } from "../../assets/images";
+import { Check } from "../../assets/images";
 import "./Note.scss";
 import { usePutRequest } from "../../utils/hooks/usePutRequest";
+import { useDebouncedEffect } from "../../utils/hooks/useDeboucedEffect";
 
 export function Note({
   id,
   title: initialTitle,
   content: initialContent,
+  isNoteChecked: initialIsNoteChecked,
+  isPined: initialIsPined,
   onSubmit,
 }) {
   const [title, setTitle] = useState(initialTitle);
   const [content, setContent] = useState(initialContent);
+  const [isNoteChecked, setIsNoteChecked] = useState(initialIsNoteChecked);
+  const [isPined, setIsPined] = useState(initialIsPined);
   const { putData, isSuccess } = usePutRequest(`/notes/${id}`);
-  const [isUpdating, setIsUpdating] = useState(false); // Ajout de l'état isUpdating pour contrôler la mise à jour
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [hasChanges, setHasChanges] = useState(false);
 
   useEffect(() => {
     setTitle(initialTitle);
     setContent(initialContent);
-  }, [id, initialTitle, initialContent]);
+    setIsNoteChecked(initialIsNoteChecked);
+    setIsPined(initialIsPined);
+    setHasChanges(false);
+  }, [id, initialTitle, initialContent, initialIsNoteChecked, initialIsPined]);
 
   const updateNote = () => {
-    setIsUpdating(true); // Définir isUpdating sur true avant la mise à jour
+    setIsUpdating(true);
     putData({
       title,
       content,
+      isNoteChecked,
+      isPined,
       lastUpdatedAt: new Date(),
     });
   };
 
-  useEffect(() => {
-    if (isSuccess && isUpdating) { // Mettre à jour localement uniquement si la mise à jour est réussie et si isUpdating est true
-      onSubmit(id, { title, content });
-      setIsUpdating(false); // Réinitialiser isUpdating après la mise à jour
-    }
-  }, [isSuccess, isUpdating, id, title, content, onSubmit]);
+  useDebouncedEffect(
+    () => {
+      if (hasChanges) {
+        console.log("Mise à jour de la note");
+        onSubmit(id, {
+          title,
+          content,
+          isNoteChecked,
+          isPined,
+          lastUpdatedAt: new Date(),
+        });
+        updateNote();
+        setIsUpdating(false);
+        setHasChanges(false);
+      }
+    },
+    [isSuccess, isUpdating, id, title, content, isNoteChecked, isPined, onSubmit, hasChanges],
+    3000
+  );
+  
+
+  const handleTitleChange = (event) => {
+    setTitle(event.target.value);
+    setHasChanges(true);
+  };
+
+  const handleContentChange = (event) => {
+    setContent(event.target.value);
+    setHasChanges(true);
+  };
+  
 
   return (
     <form
@@ -44,24 +80,32 @@ export function Note({
         updateNote();
       }}
     >
-      <input
-        className="Note-editable Note-title"
-        type="text"
-        value={title}
-        onChange={(event) => {
-          setTitle(event.target.value);
-        }}
-      />
+      <div className="Note-Header">
+        <input
+          className="Note-editable Note-title"
+          type="text"
+          value={title}
+          onChange={handleTitleChange}
+        />
+        <label className="container">
+          <input
+            className="Note-checkbox"
+            type="checkbox"
+            checked={isNoteChecked}
+            onChange={(event) => {
+              setIsNoteChecked(event.target.checked);
+            }}
+          />
+          <div className="checkmark"></div>
+        </label>
+      </div>
       <textarea
         className="Note-editable Note-content"
         value={content}
-        onChange={(event) => {
-          setContent(event.target.value);
-        }}
+        onChange={handleContentChange}
       />
       <div className="Note-actions">
         <Button>Enregistrer</Button>
-
         {isSuccess && (
           <div className="enregistreLabel">
             <p>Enregistré</p>

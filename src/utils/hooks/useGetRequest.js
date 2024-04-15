@@ -17,6 +17,7 @@ export function useGetRequest(url) {
       }
 
       setData(responseData.reverse());
+      console.log("Data fetched successfully:", responseData);
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {

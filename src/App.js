@@ -16,10 +16,10 @@ function App() {
     setNotes(initialNotes);
   }, [initialNotes]);
 
-  const refreshNote = (id, { title, content, lastUpdatedAt }) => {
+  const refreshNote = (id, { title, content, isNoteChecked, isPined, lastUpdatedAt }) => {
     setNotes(
       notes.map((note) =>
-        note.id === id ? { id, title, content, lastUpdatedAt } : note
+        note.id === id ? { id, title, content,isNoteChecked, isPined, lastUpdatedAt } : note
       )
     );
   };
@@ -51,6 +51,12 @@ function App() {
               }
               content={
                 notes.find((note) => note.id === selectedNoteId)?.content || ""
+              }
+              isNoteChecked={
+                notes.find((note) => note.id === selectedNoteId)?.isNoteChecked || ""
+              }
+              isPined={
+                notes.find((note) => note.id === selectedNoteId)?.isPined || ""
               }
               onSubmit={refreshNote}
             />

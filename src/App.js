@@ -5,10 +5,11 @@ import { Loading } from "./components/Loading/Loading";
 import { SideMenu } from "./components/SideMenu/SideMenu";
 import { useGetRequest } from "./utils/hooks/useGetRequest";
 import { Header } from "./components/Header/Header";
+import { ErrorToast } from "./components/ErrorToast/ErrorToast";
 
 function App() {
-  const { data: initialNotes, isLoading: notesLoading } = useGetRequest("/notes");
-  const { data: profile, isLoading: profileLoading } = useGetRequest("/profile"); // Utilisation de useGetRequest pour récupérer le profil
+  const { data: initialNotes, isLoading: notesLoading, error: notesError } = useGetRequest("/notes"); 
+  const { data: profile, isLoading: profileLoading, error: profileError } = useGetRequest("/profile"); 
   const [notes, setNotes] = useState(initialNotes);
   const [selectedNoteId, setSelectedNoteId] = useState(null);
 
@@ -26,7 +27,6 @@ function App() {
 
   return (
     <>
-      {/* Rendu conditionnel du Header */}
       {profileLoading ? (
         <Loading />
       ) : (
@@ -40,6 +40,8 @@ function App() {
         isLoading={notesLoading}
       />
       <main className="Main">
+        {notesError && <ErrorToast message={notesError} />}
+        {profileError && <ErrorToast message={profileError} />}
         {notesLoading ? (
           <Loading />
         ) : (

@@ -2,6 +2,7 @@ import { useState } from "react";
 
 export function usePostRequest(url) {
   const [data, setData] = useState(null);
+  const [error, setError] = useState(null); 
 
   const postData = async (body) => {
     try {
@@ -17,9 +18,9 @@ export function usePostRequest(url) {
       return responseData;
     } catch (error) {
       console.error("Error creating note:", error);
-      return null;
+      setError("Erreur lors de la création de votre note. Veuillez réessayer plus tard.");
     }
   };
 
-  return { data, postData };
+  return { data, postData, error }; 
 }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './SearchBar.scss';
 
 export function SearchBar({ onSearch }) {
@@ -14,7 +14,7 @@ export function SearchBar({ onSearch }) {
   // Effacer le terme de recherche
   const handleClear = () => {
     setSearchTerm('');
-    onSearch('');
+    onSearch(''); // Appeler la fonction de recherche avec une chaîne vide
   };
 
   return (

@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "../Button/Button";
+import { ErrorToast } from "../ErrorToast/ErrorToast"; // Import du composant ErrorToast
 import { Check } from "../../assets/images";
 import "./Note.scss";
 import { usePutRequest } from "../../utils/hooks/usePutRequest";
 import { useDebouncedEffect } from "../../utils/hooks/useDeboucedEffect";
+import { Loading } from "../Loading/Loading";
 
 export function Note({
   id,
@@ -17,8 +19,7 @@ export function Note({
   const [content, setContent] = useState(initialContent);
   const [isNoteChecked, setIsNoteChecked] = useState(initialIsNoteChecked);
   const [isPined, setIsPined] = useState(initialIsPined);
-  const { putData, isSuccess } = usePutRequest(`/notes/${id}`);
-  const [isUpdating, setIsUpdating] = useState(false);
+  const { putData, isLoading: putLoading, isSuccess, error: updateError } = usePutRequest(`/notes/${id}`);
   const [hasChanges, setHasChanges] = useState(false);
 
   useEffect(() => {
@@ -30,7 +31,6 @@ export function Note({
   }, [id, initialTitle, initialContent, initialIsNoteChecked, initialIsPined]);
 
   const updateNote = () => {
-    setIsUpdating(true);
     putData({
       title,
       content,
@@ -52,14 +52,12 @@ export function Note({
           lastUpdatedAt: new Date(),
         });
         updateNote();
-        setIsUpdating(false);
         setHasChanges(false);
       }
     },
-    [isSuccess, isUpdating, id, title, content, isNoteChecked, isPined, onSubmit, hasChanges],
+    [isSuccess, id, title, content, isNoteChecked, isPined, onSubmit, hasChanges],
     3000
   );
-  
 
   const handleTitleChange = (event) => {
     setTitle(event.target.value);
@@ -70,7 +68,6 @@ export function Note({
     setContent(event.target.value);
     setHasChanges(true);
   };
-  
 
   return (
     <form
@@ -80,6 +77,8 @@ export function Note({
         updateNote();
       }}
     >
+      {/* Intégration du ErrorToast en cas d'erreur de mise à jour */}
+      {updateError && <ErrorToast message={updateError} />}
       <div className="Note-Header">
         <input
           className="Note-editable Note-title"
@@ -105,7 +104,15 @@ export function Note({
         onChange={handleContentChange}
       />
       <div className="Note-actions">
-        <Button>Enregistrer</Button>
+        <Button type="submit">         
+        {putLoading ? 
+          <div className="Loading-wrapper">
+            <Loading />
+          </div> 
+          : 
+          "Enregistrer"
+        }
+        </Button>
         {isSuccess && (
           <div className="enregistreLabel">
             <p>Enregistré</p>

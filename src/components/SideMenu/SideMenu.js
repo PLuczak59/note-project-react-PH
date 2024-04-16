@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { useEffect } from "react";
 import "./SideMenu.scss";
 import { Button } from "../Button/Button";
 import { Loading } from "../Loading/Loading";
@@ -6,12 +7,12 @@ import { SearchBar } from "../SearchBar/SearchBar"; // Import du composant Searc
 import { Trash, Pin } from "../../assets/images";
 import { usePostRequest } from "../../utils/hooks/usePostRequest";
 import { useDeleteRequest } from "../../utils/hooks/useDeleteRequest";
-import { useDebouncedEffect } from "../../utils/hooks/useDeboucedEffect";
 import DeleteModal from "../DeleteModal/DeleteModal";
+import { ErrorToast } from "../ErrorToast/ErrorToast"; // Import du composant ErrorToast
 
 export function SideMenu({ notes, setNotes, selectedNoteId, setSelectedNoteId, isLoading }) {
-  const { postData } = usePostRequest("/notes");
-  const { deleteData } = useDeleteRequest();
+  const { postData, error: createNoteError } = usePostRequest("/notes"); // Récupération du message d'erreur de la création de note
+  const { deleteData, error: deleteNoteError } = useDeleteRequest();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [noteToDeleteId, setNoteToDeleteId] = useState(null);
 
@@ -30,6 +31,7 @@ export function SideMenu({ notes, setNotes, selectedNoteId, setSelectedNoteId, i
   };
 
   const deleteNote = async (id) => {
+    // const idtest = 1234 //id de test
     await deleteData(`/notes/${id}`);
     const updatedNotes = notes.filter((note) => note.id !== id);
     setNotes(updatedNotes);
@@ -53,23 +55,25 @@ export function SideMenu({ notes, setNotes, selectedNoteId, setSelectedNoteId, i
     setNotes(updatedNotes);
   };
 
-  // Vérifier que notes n'est pas null avant de filtrer les notes épinglées et non épinglées
-  const pinnedNotes = notes && notes.filter((note) => note.isPined);
-  const unpinnedNotes = notes && notes.filter((note) => !note.isPined);
-
-  // Trier les deux listes de notes séparées
-  const sortedNotes = [...(pinnedNotes || []), ...(unpinnedNotes || [])];
-
   const handleSearch = (searchTerm) => {
     console.log(searchTerm);
     const originalNotes = [...notes]; // Garder une copie des notes originales
-    const filteredNotes = originalNotes.filter((note) =>
-      note.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      note.content.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    setNotes(filteredNotes);
+    if (searchTerm !== "") {
+      const filteredNotes = originalNotes.filter((note) =>
+        note.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        note.content.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setNotes(filteredNotes);
+    } else {
+      setNotes(originalNotes);
+    }
   };
-  
+
+  // Vérifier que notes n'est pas null avant de filtrer les notes épinglées et non épinglées
+  const pinnedNotes = notes && notes.filter((note) => note.isPined);
+  const unpinnedNotes = notes && notes.filter((note) => !note.isPined);
+  // Trier les deux listes de notes séparées
+  const sortedNotes = [...(pinnedNotes || []), ...(unpinnedNotes || [])];
 
   return (
     <aside className="Side">
@@ -79,6 +83,9 @@ export function SideMenu({ notes, setNotes, selectedNoteId, setSelectedNoteId, i
       <div className="Search-note-wrapper">
         <SearchBar onSearch={handleSearch} />
       </div>
+      {/* Affichage du toast en cas d'erreur lors de la création d'une note */}
+      {createNoteError && <ErrorToast message={createNoteError} />}
+      {deleteNoteError && <ErrorToast message={deleteNoteError} />}
       {isLoading ? (
         <div className="Loading-wrapper">
           <Loading />

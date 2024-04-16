@@ -1,10 +1,12 @@
 import { useState } from "react";
 
 export function usePutRequest(url) {
+  const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [error, setError] = useState(null);
 
   const putData = async (data) => {
-    setIsSuccess(false);
+    setIsLoading(true); // Définir isLoading sur true lors du début de la requête
 
     try {
       const response = await fetch(url, {
@@ -22,8 +24,11 @@ export function usePutRequest(url) {
       setIsSuccess(true);
     } catch (error) {
       console.error(error);
+      setError("Une erreur est survenue lors de la mise à jour de votre Note. Veuillez réessayerplus tard.");
+    } finally {
+      setIsLoading(false); // Définir isLoading sur false une fois la requête terminée
     }
   };
 
-  return { putData, isSuccess };
+  return { putData, isLoading, isSuccess, error };
 }

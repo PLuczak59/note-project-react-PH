@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+// Hook personnalisé pour la suppression de données
 export function useDeleteRequest() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -22,7 +23,7 @@ export function useDeleteRequest() {
 
       setIsLoading(false);
     } catch (error) {
-      console.error("Error deleting data:", error);
+      //console.error("Error deleting data:", error);
       setIsLoading(false);
       setIsSuccess(false);
       setError("Une erreur s'est produite lors de la suppression de votre note. Veuillez réessayer plus tard.");

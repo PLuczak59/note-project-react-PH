@@ -1,20 +1,21 @@
 import React, { useState } from 'react';
 import './SearchBar.scss';
 
+// Composant de la barre de recherche
 export function SearchBar({ onSearch }) {
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Mettre à jour le terme de recherche et appeler la fonction de recherche
+  //Met à jour de la recherche à chaque changement de l'input
   const handleChange = (event) => {
     const term = event.target.value;
     setSearchTerm(term);
     onSearch(term);
   };
 
-  // Effacer le terme de recherche
+  // Efface le contenu de la barre de recherche
   const handleClear = () => {
     setSearchTerm('');
-    onSearch(''); // Appeler la fonction de recherche avec une chaîne vide
+    onSearch('');
   };
 
   return (

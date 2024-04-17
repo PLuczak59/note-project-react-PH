@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+// Hook personnalisé pour les requêtes POST (ajout de données)
 export function usePostRequest(url) {
   const [data, setData] = useState(null);
   const [error, setError] = useState(null); 
@@ -17,7 +18,7 @@ export function usePostRequest(url) {
       setData(responseData);
       return responseData;
     } catch (error) {
-      console.error("Error creating note:", error);
+      //console.error("Error creating note:", error);
       setError("Erreur lors de la création de votre note. Veuillez réessayer plus tard.");
     }
   };

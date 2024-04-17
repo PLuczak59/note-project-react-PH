@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "../Button/Button";
-import { ErrorToast } from "../ErrorToast/ErrorToast"; // Import du composant ErrorToast
+import { ErrorToast } from "../ErrorToast/ErrorToast"; 
 import { Check } from "../../assets/images";
 import "./Note.scss";
 import { usePutRequest } from "../../utils/hooks/usePutRequest";
 import { useDebouncedEffect } from "../../utils/hooks/useDeboucedEffect";
 import { Loading } from "../Loading/Loading";
 
+// Composant Note qui permet d'afficher et de modifier une note
 export function Note({
   id,
   title: initialTitle,
@@ -22,6 +23,7 @@ export function Note({
   const { putData, isLoading: putLoading, isSuccess, error: updateError } = usePutRequest(`/notes/${id}`);
   const [hasChanges, setHasChanges] = useState(false);
 
+  // Récupération des données initiales de la note
   useEffect(() => {
     setTitle(initialTitle);
     setContent(initialContent);
@@ -30,6 +32,7 @@ export function Note({
     setHasChanges(false);
   }, [id, initialTitle, initialContent, initialIsNoteChecked, initialIsPined]);
 
+  // Met à jour la note après un délai de 3 secondes côté serveur
   const updateNote = () => {
     putData({
       title,
@@ -43,7 +46,7 @@ export function Note({
   useDebouncedEffect(
     () => {
       if (hasChanges) {
-        console.log("Mise à jour de la note");
+        //console.log("Mise à jour de la note");
         onSubmit(id, {
           title,
           content,
@@ -59,11 +62,13 @@ export function Note({
     3000
   );
 
+  // Gestion des changements de titre
   const handleTitleChange = (event) => {
     setTitle(event.target.value);
     setHasChanges(true);
   };
 
+  // Gestion des changements de contenu
   const handleContentChange = (event) => {
     setContent(event.target.value);
     setHasChanges(true);
@@ -77,7 +82,6 @@ export function Note({
         updateNote();
       }}
     >
-      {/* Intégration du ErrorToast en cas d'erreur de mise à jour */}
       {updateError && <ErrorToast message={updateError} />}
       <div className="Note-Header">
         <input

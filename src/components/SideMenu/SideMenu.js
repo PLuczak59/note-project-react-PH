@@ -1,21 +1,21 @@
 import { useState } from "react";
-import { useEffect } from "react";
 import "./SideMenu.scss";
 import { Button } from "../Button/Button";
 import { Loading } from "../Loading/Loading";
-import { SearchBar } from "../SearchBar/SearchBar"; // Import du composant SearchBar
+import { SearchBar } from "../SearchBar/SearchBar";
 import { Trash, Pin } from "../../assets/images";
 import { usePostRequest } from "../../utils/hooks/usePostRequest";
 import { useDeleteRequest } from "../../utils/hooks/useDeleteRequest";
 import DeleteModal from "../DeleteModal/DeleteModal";
-import { ErrorToast } from "../ErrorToast/ErrorToast"; // Import du composant ErrorToast
+import { ErrorToast } from "../ErrorToast/ErrorToast"; 
 
 export function SideMenu({ notes, setNotes, selectedNoteId, setSelectedNoteId, isLoading }) {
-  const { postData, error: createNoteError } = usePostRequest("/notes"); // Récupération du message d'erreur de la création de note
+  const { postData, error: createNoteError } = usePostRequest("/notes"); 
   const { deleteData, error: deleteNoteError } = useDeleteRequest();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [noteToDeleteId, setNoteToDeleteId] = useState(null);
 
+  // Fonction pour créer une nouvelle note
   const createNote = async () => {
     const newNoteData = await postData({
       title: "Nouvelle note",
@@ -30,6 +30,7 @@ export function SideMenu({ notes, setNotes, selectedNoteId, setSelectedNoteId, i
     }
   };
 
+  // Fonction pour supprimer une note
   const deleteNote = async (id) => {
     // const idtest = 1234 //id de test
     await deleteData(`/notes/${id}`);
@@ -38,16 +39,19 @@ export function SideMenu({ notes, setNotes, selectedNoteId, setSelectedNoteId, i
     setSelectedNoteId(null);
   };
 
+  // Si on supprime une ote, on ouvre la fenêtre de confirmation de suppression 
   const handleOpenDelete = (id) => {
     setNoteToDeleteId(id);
     setIsDeleteModalOpen(true);
   };
 
+  // Si on confirme la suppression, on supprime la note
   const confirmDeleteNote = () => {
     deleteNote(noteToDeleteId);
     setIsDeleteModalOpen(false);
   };
 
+  // Fonction pour épingler ou désépingler une note
   const handlePinNote = (id) => {
     const updatedNotes = notes.map((note) =>
       note.id === id ? { ...note, isPined: !note.isPined } : note
@@ -55,9 +59,10 @@ export function SideMenu({ notes, setNotes, selectedNoteId, setSelectedNoteId, i
     setNotes(updatedNotes);
   };
 
+  // Fonction pour filtrer les notes en fonction du terme de recherche
   const handleSearch = (searchTerm) => {
-    console.log(searchTerm);
-    const originalNotes = [...notes]; // Garder une copie des notes originales
+    //console.log(searchTerm);
+    const originalNotes = [...notes];
     if (searchTerm !== "") {
       const filteredNotes = originalNotes.filter((note) =>
         note.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -69,10 +74,9 @@ export function SideMenu({ notes, setNotes, selectedNoteId, setSelectedNoteId, i
     }
   };
 
-  // Vérifier que notes n'est pas null avant de filtrer les notes épinglées et non épinglées
+  // Vérifier que notes n'est pas null avant de filtrer les notes épinglées et non épinglées puis les trier par ordre d'épinglage et de modification
   const pinnedNotes = notes && notes.filter((note) => note.isPined);
   const unpinnedNotes = notes && notes.filter((note) => !note.isPined);
-  // Trier les deux listes de notes séparées
   const sortedNotes = [...(pinnedNotes || []), ...(unpinnedNotes || [])];
 
   return (
@@ -83,7 +87,6 @@ export function SideMenu({ notes, setNotes, selectedNoteId, setSelectedNoteId, i
       <div className="Search-note-wrapper">
         <SearchBar onSearch={handleSearch} />
       </div>
-      {/* Affichage du toast en cas d'erreur lors de la création d'une note */}
       {createNoteError && <ErrorToast message={createNoteError} />}
       {deleteNoteError && <ErrorToast message={deleteNoteError} />}
       {isLoading ? (

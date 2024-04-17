@@ -17,6 +17,7 @@ function App() {
     setNotes(initialNotes);
   }, [initialNotes]);
 
+  // Fonction qui permet de mettre à jour une note localement
   const refreshNote = (id, { title, content, isNoteChecked, isPined, lastUpdatedAt }) => {
     setNotes(
       notes.map((note) =>

@@ -1,10 +1,12 @@
 import React, { useEffect } from "react";
 import "./DeleteModal.scss";
 
+// Composant de la fenêtre modale de suppression
 const DeleteModal = ({ isOpen, onClose, onDelete }) => {
+  // Vérifie si la touche "Echap" est pressée pour fermer la fenêtre modale
   useEffect(() => {
     const handleEscKeyPress = (event) => {
-      if (event.keyCode === 27 && isOpen) { // Vérifie si la touche enfoncée est la touche "Échap" si la modal est ouverte
+      if (event.keyCode === 27 && isOpen) { 
         onClose(); 
       }
     };

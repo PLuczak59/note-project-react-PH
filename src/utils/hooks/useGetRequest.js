@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 
+// Hook personnalisé pour la récupération de données
 export function useGetRequest(url) {
   const [data, setData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);

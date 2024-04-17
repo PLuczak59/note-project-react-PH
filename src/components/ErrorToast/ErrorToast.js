@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import './ErrorToast.scss';
 
+// Composant qui affiche u toats contenant un message d'erreur si une erreur survient
 export function ErrorToast({ message }) {
   const [isVisible, setIsVisible] = useState(true);
 
   const handleClose = () => {
-    setIsVisible(false); // Définir isVisible sur false pour déclencher l'animation de disparition
+    setIsVisible(false); 
   };
 
   return (

@@ -34,22 +34,22 @@
     @keyframes slideIn {
       from {
         transform: translate(-50%, 100%);
-        opacity: 0; /* Ajout de l'opacité initiale */
+        opacity: 0;
       }
       to {
         transform: translate(-50%, 0);
-        opacity: 1; /* Opacité complète à la fin de l'animation */
+        opacity: 1;
       }
     }
   
     @keyframes slideOut {
       from {
         transform: translate(-50%, 0);
-        opacity: 1; /* Opacité complète au début de l'animation */
+        opacity: 1;
       }
       to {
         transform: translate(-50%, 100%);
-        opacity: 0; /* Réduction de l'opacité à 0 à la fin de l'animation */
+        opacity: 0;
         visibility: hidden;
       }
     }
